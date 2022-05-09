@@ -63,7 +63,7 @@ index_page = html.Div([dbc.Card([
 
             html.Div([
                 # this code section taken from Dash docs https://dash.plotly.com/dash-core-components/upload
-                dcc.Upload(
+                dcc.Button(dcc.Upload(
                     id='upload-data',
                     children=html.Div([
                         'Drag and Drop or ',
@@ -81,7 +81,7 @@ index_page = html.Div([dbc.Card([
                     },
                     # Allow multiple files to be uploaded
                     multiple=True
-                ),
+                )style={'width': '100%'}, color='light'),
                 html.Div(id='output-div'),
                 html.Div(id='output-datatable'),
             ]),
@@ -97,7 +97,7 @@ index_page = html.Div([dbc.Card([
         is_open=False,
     ),
 
-    dbc.Card([
+    dbc.Card([                                                                  # Button with link taking to the webpage with more information about the project
         dbc.CardBody([
             html.P("For more information on algorithm: "),
             dcc.Link(dbc.Button("Click here", outline=True, color="primary"),
@@ -105,7 +105,7 @@ index_page = html.Div([dbc.Card([
                      target='blank'),
         ])
     ], style={"width": "25rem"}, className='inputMore'),
-    dbc.Card([
+    dbc.Card([                                                                  # Button which takes to second page with generated data
         dbc.CardBody([
             html.P("View how it works on randomly generated data: "),
             dcc.Link(dbc.Button("Analyse generated data",
@@ -121,7 +121,7 @@ df = px.data.iris()  # iris is a pandas DataFrame
 fig = px.scatter(df, x="sepal_width", y="sepal_length"),
 popover_children = "I am a poopover!"
 
-vis_page = html.Div([
+vis_page = html.Div([                                                           # Second page with graphs and analyses
 
     html.Div([
 
@@ -170,7 +170,7 @@ vis_page = html.Div([
         ]),
     ], className="graphCont"),
 
-    dbc.Card([
+    dbc.Card([                                                              # Text card which shows the output of the analyzed data
         dbc.CardBody([
             html.P(id = "best_reward_text",
                 children = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
@@ -198,7 +198,7 @@ vis_page = html.Div([
 
 ], className="cont", id="print"),
 
-app.clientside_callback(
+app.clientside_callback(                                                     # Callback for downloading Output, which downloads content of second page and converts it to pdf
     '''
     function(n_clicks){
         if(n_clicks > 0){
@@ -218,12 +218,12 @@ app.clientside_callback(
     Input('js', 'n_clicks'),
 )
 
-err_page = html.Div([
+err_page = html.Div([                                                       # Error page for wrong URLs
     html.H1('You have entered wrong page')
 ]),
 
 
-@app.callback(Output('page-content', 'children'),
+@app.callback(Output('page-content', 'children'),                           # Callback for returning the landing, second or error pages
               [Input('url', 'pathname')])
 def displayPage(pathname):
     if pathname == '/homepage':
@@ -234,7 +234,7 @@ def displayPage(pathname):
         return err_page
 
 
-@app.callback(
+@app.callback(                                                              # Callback for pop-up window when clicking on Input Data
     Output("modal", "is_open"),
     [Input("open", "n_clicks"), Input("close", "n_clicks")],
     [State("modal", "is_open")],
@@ -245,7 +245,7 @@ def toggle_modal(n1, n2, is_open):
     return is_open
 
 
-def parse_contents(contents, filename, date):
+def parse_contents(contents, filename, date):                              # Function for parsing the content of csv and xls file
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
@@ -267,7 +267,7 @@ def parse_contents(contents, filename, date):
               Input('upload-data', 'contents'),
               State('upload-data', 'filename'),
               State('upload-data', 'last_modified'))
-def show_button(list_of_contents, list_of_names, list_of_dates):
+def show_button(list_of_contents, list_of_names, list_of_dates):        # When inputing data this function brings a button for Analyzing Data
     children = [parse_contents(c, n, d) for c, n, d in zip(list_of_contents, list_of_names, list_of_dates)]
     if list_of_contents is not None:
         return dcc.Link(dbc.Button("Analyze Data", outline=False, color="primary", id="analyze_input_data"),
